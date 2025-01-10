@@ -1,0 +1,33 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  # config.vm.box = "bento/debian-12"
+
+  config.vm.box = "gusztavvargadr/ubuntu-desktop-2404-lts"
+  config.vm.box_version = "2404.0.2409"
+
+  config.vm.define "iharileS"
+  config.vm.hostname = "iharileS"
+  config.vm.network "private_network", ip: "192.168.56.110"
+  config.vm.network "forwarded_port", guest: 8080, host: 8081
+
+
+
+  config.vm.provider "virtualbox" do |v|
+    v.name = "iharileS"
+    v.memory = 6024
+    v.cpus = 6
+
+    # Add a storage disk of 100GB
+    # v.customize ['createhd', '--filename', 'iharileS-storage.vdi', '--size', 102400] # Size in MB (100GB)
+    # v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', 'iharileS-storage.vdi']
+    
+  end
+
+  # config.vm.provision "shell", privileged: true, path: "./shiii.sh"
+
+
+
+end

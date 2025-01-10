@@ -12,6 +12,9 @@ spec:
       labels:
         app: app2
     spec:
+      env:
+        - name: MESSAGE
+          value: "Hello from app2"
       containers:
       - name: app2-container
         image: paulbouwer/hello-kubernetes:1.10
