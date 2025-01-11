@@ -7,6 +7,7 @@
 
 # Minimal settings
 global:
+  edition: ce
   ingress:
     configureCertmanager: false
     class: "nginx"
@@ -38,8 +39,9 @@ gitlab:
     minReplicas: 1
     maxReplicas: 1
     service:
-      type: NodePort
-      nodePort: 32080
+      type: LoadBalancer
+      loadBalancerSourceRanges:
+        - "192.168.56.115/24"
   sidekiq:
     minReplicas: 1
     maxReplicas: 1
