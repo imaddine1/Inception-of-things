@@ -17,7 +17,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.provider "virtualbox" do |v|
     v.name = "iharileS"
-    v.memory = 6024
+    v.memory = 8192
     v.cpus = 6
 
     # Add a storage disk of 100GB
@@ -29,7 +29,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", privileged: true, inline: <<-SHELL
     sudo apt-get update && sudo apt-get upgrade -y
   SHELL
-  
+
   # Copy files to /home/vagrant
   config.vm.provision "file", source: "./values.yml", destination: "/home/vagrant/values.yml"
   config.vm.provision "file", source: "./script.sh", destination: "/home/vagrant/script.sh"

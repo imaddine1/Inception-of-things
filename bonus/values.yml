@@ -14,6 +14,7 @@ global:
   hosts:
     domain: localhost
     externalIP: 0.0.0.0
+    https: false
   # Disable Rails bootsnap cache (temporary)
   rails:
     bootsnap:
@@ -39,9 +40,7 @@ gitlab:
     minReplicas: 1
     maxReplicas: 1
     service:
-      type: LoadBalancer
-      loadBalancerSourceRanges:
-        - "192.168.56.115/24"
+      type: NodePort
   sidekiq:
     minReplicas: 1
     maxReplicas: 1
