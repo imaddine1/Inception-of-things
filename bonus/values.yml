@@ -39,8 +39,6 @@ gitlab:
   webservice:
     minReplicas: 1
     maxReplicas: 1
-    service:
-      type: NodePort
   sidekiq:
     minReplicas: 1
     maxReplicas: 1

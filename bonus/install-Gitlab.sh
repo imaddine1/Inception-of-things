@@ -89,11 +89,11 @@ echo -e "${GREEN}GITLAB PASSWORD: $GITLAB_PASSWORD${RESET}"
 
 # Port-forward to access GitLab
 print_header "Setting Up Port Forwarding to Access GitLab"
-if pgrep -f "kubectl port-forward svc/gitlab-webservice-default" > /dev/null; then
+if pgrep -f "kubectl port-forward svc/my-gitlab-webservice-default" > /dev/null; then
   info "Port forwarding is already set up"
 else
-  sudo kubectl port-forward svc/gitlab-webservice-default -n gitlab 82:8181 2>&1 >/dev/null &
-  echo -e "${GREEN}GitLab is accessible at http://localhost:82${RESET}"
+  sudo kubectl port-forward svc/my-gitlab-webservice-default -n gitlab --address 0.0.0.0 8888:8181 2>&1 >/dev/null &
+  echo -e "${GREEN}GitLab is accessible at http://localhost:8080${RESET}"
 fi
 
 print_header "Installation Complete"
