@@ -38,8 +38,8 @@ sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
     ########### we add this step to make sure the pods are running ##########
     kubectl wait --for=condition=Ready pods --all -n argocd --timeout=180s
     ####  now we are just hoping that argocd running well ########
-    ####  expose port of argocd , for accessing the ui of it #######
-    kubectl port-forward svc/argocd-server 8070:80 -n argocd&
+    ####  expose port of argocd , for accessing the UI #######
+    kubectl port-forward svc/argocd-server --address 0.0.0.0 8070:80 -n argocd&
     ##### downloading the agrocd UI #########
     wget https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64 -O argocd
     #### make it accesible within your system ####
