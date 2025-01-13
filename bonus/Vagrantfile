@@ -11,7 +11,10 @@ Vagrant.configure("2") do |config|
   config.vm.define "iharileS"
   config.vm.hostname = "iharileS"
   config.vm.network "private_network", ip: "192.168.56.115"
+  # This is For UI of GitLab
   config.vm.network "forwarded_port", guest: 8888, host: 8080
+  # This is for UI of ArgoCD
+  config.vm.network "forwarded_port", guest: 8070, host: 8081
 
 
 
@@ -31,13 +34,16 @@ Vagrant.configure("2") do |config|
   SHELL
 
   # Copy files to /home/vagrant
-  config.vm.provision "file", source: "./values.yml", destination: "/home/vagrant/values.yml"
-  config.vm.provision "file", source: "./script.sh", destination: "/home/vagrant/script.sh"
+  config.vm.provision "file", source: "./confs/values.yml", destination: "/home/vagrant/"
+  config.vm.provision "file", source: "./confs/application.yml", destination: "/home/vagrant/"
+  config.vm.provision "file", source: "./script/install-gitlab.sh", destination: "/home/vagrant/"
+  config.vm.provision "file", source: "./script/install-argocd.sh", destination: "/home/vagrant/"
+  config.vm.provision "file", source: "./script/uninstall-k3s.sh", destination: "/home/vagrant/"
 
   # Move files to root directory with elevated privileges
   config.vm.provision "shell", privileged: true, inline: <<-SHELL
     mv /home/vagrant/values.yml /values.yml
-    mv /home/vagrant/script.sh /script.sh
+    mv /home/vagrant/install-gitlab.sh /install-gitlab.sh
   SHELL
 
 

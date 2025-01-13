@@ -84,7 +84,7 @@ print_header "Waiting for GitLab Webservice to be Ready"
 
 # Retrieve the initial root password for GitLab
 print_header "Retrieving GitLab Initial Root Password"
-GITLAB_PASSWORD=$(sudo kubectl get secret my-gitlab-gitlab-initial-root-password -n gitlab -o jsonpath="{.data.password}" | base64 --decode) || handle_error "Failed to retrieve GitLab initial root password"
+export GITLAB_PASSWORD=$(sudo kubectl get secret my-gitlab-gitlab-initial-root-password -n gitlab -o jsonpath="{.data.password}" | base64 --decode) || handle_error "Failed to retrieve GitLab initial root password"
 echo -e "${GREEN}GITLAB PASSWORD: $GITLAB_PASSWORD${RESET}"
 
 # Port-forward to access GitLab
@@ -95,5 +95,6 @@ else
   sudo kubectl port-forward svc/my-gitlab-webservice-default -n gitlab --address 0.0.0.0 8888:8181 2>&1 >/dev/null &
   echo -e "${GREEN}GitLab is accessible at http://localhost:8080${RESET}"
 fi
+
 
 print_header "Installation Complete"
