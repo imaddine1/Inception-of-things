@@ -22,28 +22,30 @@ Vagrant.configure("2") do |config|
     v.name = "iharileS"
     v.memory = 8192
     v.cpus = 6
-
-    # Add a storage disk of 100GB
-    # v.customize ['createhd', '--filename', 'iharileS-storage.vdi', '--size', 102400] # Size in MB (100GB)
-    # v.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', 'iharileS-storage.vdi']
     
   end
 
-  config.vm.provision "shell", privileged: true, inline: <<-SHELL
-    sudo apt-get update && sudo apt-get upgrade -y
-  SHELL
 
   # Copy files to /home/vagrant
+  
   config.vm.provision "file", source: "./confs/values.yml", destination: "/home/vagrant/"
   config.vm.provision "file", source: "./confs/application.yml", destination: "/home/vagrant/"
   config.vm.provision "file", source: "./script/install-gitlab.sh", destination: "/home/vagrant/"
   config.vm.provision "file", source: "./script/install-argocd.sh", destination: "/home/vagrant/"
   config.vm.provision "file", source: "./script/uninstall-k3s.sh", destination: "/home/vagrant/"
+  config.vm.provision "file", source: "./script/install-all.sh", destination: "/home/vagrant/"
+
 
   # Move files to root directory with elevated privileges
   config.vm.provision "shell", privileged: true, inline: <<-SHELL
-    mv /home/vagrant/values.yml /values.yml
-    mv /home/vagrant/install-gitlab.sh /install-gitlab.sh
+    mkdir -p /confs /script
+    mv /home/vagrant/values.yml /confs/values.yml
+    mv /home/vagrant/application.yml /confs/application.yml
+
+    mv /home/vagrant/install-gitlab.sh /script/install-gitlab.sh
+    mv /home/vagrant/install-argocd.sh /script/install-argocd.sh
+    mv /home/vagrant/uninstall-k3s.sh /script/uninstall-k3s.sh
+    mv /home/vagrant/install-all.sh /script/install-all.sh
   SHELL
 
 

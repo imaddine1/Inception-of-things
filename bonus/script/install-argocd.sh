@@ -41,64 +41,60 @@ show_wait_animation() {
   echo "    "
 }
 
-# Update the packages
-print_header "Updating Packages"
-sudo apt-get update && sudo apt-get upgrade -y & show_wait_animation || handle_error "Failed to update packages"
-
-# Install Docker
-print_header "Installing Docker"
-if command -v docker &> /dev/null; then
-  info "Docker is already installed"
-else
-  curl -fsSL https://get.docker.com -o get-docker.sh
-  sudo sh get-docker.sh -y & show_wait_animation || handle_error "Failed to install Docker"
-fi
-
 
 # Create namespaces
 print_header "Creating Namespaces"
-kubectl create namespace dev & show_wait_animation || handle_error "Failed to create namespace 'dev'"
-kubectl create namespace argocd & show_wait_animation || handle_error "Failed to create namespace 'argocd'"
+sudo kubectl get namespace dev || sudo kubectl create namespace dev || handle_error "Failed to create namespace 'dev'"
+sudo kubectl get namespace argocd || sudo kubectl create namespace argocd || handle_error "Failed to create namespace 'argocd'"
 
 # Install ArgoCD
 print_header "Installing ArgoCD"
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml & show_wait_animation || handle_error "Failed to install ArgoCD"
+sudo kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml & show_wait_animation || handle_error "Failed to install ArgoCD"
 
 # Wait for ArgoCD pods to be ready
 print_header "Waiting for ArgoCD Pods to be Ready"
-kubectl wait --for=condition=Ready pods --all -n argocd --timeout=300s & show_wait_animation || handle_error "ArgoCD pods did not become ready in time"
+sudo kubectl wait --for=condition=Ready pods --all -n argocd --timeout=300s & show_wait_animation || handle_error "ArgoCD pods did not become ready in time"
 
 # Expose ArgoCD server port
 print_header "Exposing ArgoCD Server Port"
-kubectl port-forward svc/argocd-server --address 0.0.0.0 8070:80 -n argocd &
+sudo curl localhost:8070
+if [ $? -eq 0 ]; then
+  info "ArgoCD Server port is already exposed"
+else
+  sudo kubectl port-forward svc/argocd-server --address 0.0.0.0 8070:80 -n argocd &
+fi
 echo -e "${GREEN}ArgoCD is accessible at http://localhost:8070${RESET}"
 
 ##### Download ArgoCD CLI #########
 print_header "Downloading ArgoCD CLI"
-wget https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64 -O argocd & show_wait_animation || handle_error "Failed to download ArgoCD CLI"
-#### make it accesible within your system ####
-chmod +x argocd
-sudo mv argocd /usr/local/bin/
+if ls /usr/local/bin/argocd &> /dev/null; then
+  info "ArgoCD CLI is already installed"
+else
+  print_header "Start Downloading ArgoCD CLI"
+  sudo wget https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64 -O argocd & show_wait_animation || handle_error "Failed to download ArgoCD CLI"
+  sudo chmod +x argocd
+  sudo mv argocd /usr/local/bin/
+fi
 
-print_header "Logging in to ArgoCD"
-######## those vars will help me to login on argocd #########
-sudo echo "ARGOCD_SERVER='localhost:8070'" >> ~/.bashrc
-sudo echo "ARGOCD_USERNAME='admin'" >> ~/.bashrc
-source ~/.bashrc
+
+print_header "Logging to ArgoCD"
+
 ############ login now #######
-argocd login $ARGOCD_SERVER --username $ARGOCD_USERNAME  \
-  --password $(sudo kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d) \
-  --insecure || handle_error "Failed to login to ArgoCD"
+argocd login 127.0.0.1:8070 --username admin --password $(sudo kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d) --insecure
+
+#### Check if the login is successful or not ####
+if [ $? -eq 0 ]; then
+  echo -e "${GREEN}Successfully logged in to ArgoCD${RESET}"
+else
+  handle_error "Failed to login to ArgoCD"
+fi
 
 print_header "Creating ArgoCD Application"
-###### change the namespace to where argocd live #######
-sudo kubectl config set-context --current --namespace=argocd
 ####### now apply yaml file that will responsible for deploying the app from git repo to dev namespace ########
-sudo kubectl apply  -f ./application.yml & show_wait_animation || handle_error "Failed to create ArgoCD application"
+sudo kubectl apply  -f /confs/application.yml -n argocd & show_wait_animation || handle_error "Failed to create ArgoCD application"
 
-
+echo -e "${GREEN}Access token: glpat-cVYMfVZoWh7cyvUpLPKf${RESET}"
 print_header "Installation Complete"
-
 
 ##### NB: there is another approach using argo cli to add the repo and the place where should be deployed , 
     ####  from the subject seemed they prefer declarative way , and in real life it is the best practice

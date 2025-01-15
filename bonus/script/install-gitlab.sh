@@ -64,11 +64,7 @@ fi
 
 # Add GitLab Helm repository
 print_header "Adding GitLab Helm Repository"
-if helm repo list | grep -q 'gitlab'; then
-  info "GitLab Helm repository is already added"
-else
-  helm repo add gitlab https://charts.gitlab.io/ || handle_error "Failed to add GitLab Helm repository"
-fi
+sudo helm repo add gitlab https://charts.gitlab.io/ || handle_error "Failed to add GitLab Helm repository"
 sudo helm repo update || handle_error "Failed to update Helm repositories"
 
 # Install or upgrade GitLab using Helm
@@ -76,7 +72,7 @@ sudo helm repo update || handle_error "Failed to update Helm repositories"
 print_header "Installing or Upgrading GitLab"
 sudo helm upgrade --install my-gitlab gitlab/gitlab --create-namespace --namespace gitlab \
   --kubeconfig /etc/rancher/k3s/k3s.yaml \
-  -f ./values.yml \
+  -f /confs/values.yml \
   --timeout 800s 
 # Wait until the webservice is ready
 print_header "Waiting for GitLab Webservice to be Ready"

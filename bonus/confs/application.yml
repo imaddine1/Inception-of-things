@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: http://192.168.56.115:8888/root/another-point-for-argocd.git
+    repoURL: ${REPO_URL}
     targetRevision: HEAD
     path: my-app
   destination:
