@@ -91,9 +91,8 @@ fi
 
 print_header "Creating ArgoCD Application"
 ####### now apply yaml file that will responsible for deploying the app from git repo to dev namespace ########
-sudo kubectl apply  -f /confs/application.yml -n argocd & show_wait_animation || handle_error "Failed to create ArgoCD application"
+sudo kubectl apply  -f /confs/application.yml -n argocd  || handle_error "Failed to create ArgoCD application"
 
-echo -e "${GREEN}Access token: glpat-cVYMfVZoWh7cyvUpLPKf${RESET}"
 print_header "Installation Complete"
 
 ##### NB: there is another approach using argo cli to add the repo and the place where should be deployed , 

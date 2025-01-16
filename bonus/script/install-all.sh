@@ -57,9 +57,7 @@ run_script() {
 
 # Run the individual scripts
 run_script "install-gitlab.sh"
-read -p "Please enter the repository URL: " repo_url
-info "Cloning repository from $repo_url"
-export REPO_URL="$repo_url"
+read -p "Please change repo_Url at appliaction.yml: " repo_url
 run_script "install-argocd.sh"
 
 print_header "All Installations Complete"
@@ -68,7 +66,7 @@ curl -s -o /dev/null localhost:8888
 if [ $? -eq 0 ]; then
   echo -e "${GREEN}Gitlab is running on port 8080${RESET}"
   echo -e "${GREEN}UserName is : root ${RESET}"
-  echo -e "${GREEN}Password is : ${sudo kubectl get secret my-gitlab-gitlab-initial-root-password -n gitlab -o jsonpath="{.data.password}" | base64 --decode} ${RESET}"
+  echo -e "${GREEN}Password is : $(sudo kubectl get secret my-gitlab-gitlab-initial-root-password -n gitlab -o jsonpath="{.data.password}" | base64 --decode) ${RESET}"
 else
   echo -e "${RED}Gitlab is not running on port 8888${RESET}"
 fi
@@ -77,7 +75,7 @@ curl -s -o /dev/null localhost:8070
 if [ $? -eq 0 ]; then
   echo -e "${GREEN}ArgoCD is running on port 8070${RESET}"
   echo -e "${GREEN}UserName is : admin ${RESET}"
-  echo -e "${GREEN}Password is : ${sudo kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 --decode} ${RESET}"
+  echo -e "${GREEN}Password is : $(sudo kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 --decode) ${RESET}"
 else
   echo -e "${RED}ArgoCD is not running on port 8070${RESET}"
 fi
