@@ -38,6 +38,9 @@ Vagrant.configure("2") do |config|
 
   # Move files to root directory with elevated privileges
   config.vm.provision "shell", privileged: true, inline: <<-SHELL
+    apt update && apt upgrade -y
+    apt install -y git vim
+
     mkdir -p /confs /script
     mv /home/vagrant/values.yml /confs/values.yml
     mv /home/vagrant/application.yml /confs/application.yml

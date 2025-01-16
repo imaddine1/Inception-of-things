@@ -51,7 +51,6 @@ run_script() {
   local script_name=$1
   print_header "Running $script_name"
   bash $script_name || (handle_error "Failed to run $script_name" )
-  clear
   echo -e "${GREEN}$script_name installation is complete${RESET}"
 }
 
