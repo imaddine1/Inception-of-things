@@ -4,7 +4,7 @@ Hello everybody, I am pleased to demonstrate some aspects of Kubernetes (k8s). F
 
 ## Table of Contents
 - [Architecture](#architecture)
-- [Common terms in the world of k8s](#common-terms)
+- [Common terms in the world of k8s](#common-terms-in-the-world-of-k8s)
 - [Kubeconfig](#kubeconfig)
 - [Pods](#pods)
 - [ReplicaSet](#replicaset)
@@ -53,6 +53,8 @@ This is an example of Kubernetes (k8s) architecture. Below is a diagram that ill
 
 In our situation, we have installed k3s, which combines both the master and worker components into a single node. This setup retains the same components but is optimized for lightweight and resource-constrained environments.
 
+For a better understanding, you can watch this [video](https://www.youtube.com/watch?v=umXEmn3cMWY).
+
 ## Common terms in the world of k8s
 
 Understanding the terminology used in Kubernetes is crucial for navigating and managing a cluster. Here are some common terms you will encounter:
@@ -64,10 +66,49 @@ Worker or (agent) Node: Runs application workloads (pods).
 - **Resources**: These are the objects that you manage in Kubernetes, such as Pods, Services, and Deployments.
 - **Components**: These refer to the individual parts that make up the Kubernetes system, including the API Server, etcd, Controller Manager, Scheduler, Kubelet, and Kube-proxy.
 - **Objects**: A record of a resource, stored in etcd (Kubernetes' database). Common objects.  include Pods, Services, Deployment and ConfigMaps.
-- **Abstraction**: A way to simplify complex concepts by hiding details:
-Pods abstract containers.
-Deployments abstract pod scaling and updates.
+- **Abstraction**: A way to simplify complex concepts by hiding details:</br>
+Pods abstract containers.</br>
+Deployments abstract pod scaling and updates.</br>
 Services abstract networking and load balancing.
 - **Manifest**: A YAML/JSON file that defines a resource or object.
 
 These terms are fundamental to understanding how Kubernetes operates and how to interact with it effectively.
+
+## Kubeconfig
+
+The `kubeconfig` file is a configuration file used by Kubernetes to manage cluster access. It contains information about clusters, users, namespaces, and authentication mechanisms. This file is essential for the `kubectl` command-line tool to interact with Kubernetes clusters.
+
+### Structure of a Kubeconfig File
+
+A typical `kubeconfig` file is divided into three main sections:
+
+1. **Clusters**: Defines the clusters that `kubectl` can connect to.
+2. **Users**: Specifies the users who can access the clusters.
+3. **Contexts**: Combines clusters and users to define a context. A context is a tuple of (cluster, user, namespace).
+
+### Example Kubeconfig File
+
+```yaml
+apiVersion: v1
+kind: Config
+clusters:
+- cluster:
+    certificate-authority: /path/to/ca.crt
+    server: https://kubernetes.example.com
+  name: example-cluster
+users:
+- name: example-user
+  user:
+    client-certificate: /path/to/client.crt
+    client-key: /path/to/client.key
+contexts:
+- context:
+    cluster: example-cluster
+    user: example-user
+    namespace: default
+  name: example-context
+current-context: example-context
+```
+
+After installing k3s, the default path for this configuration is `/etc/rancher/k3s/k3s.yml`. If you are using a different path, you can use the `kubectl` command with the `--kubeconfig` option followed by the path.
+
