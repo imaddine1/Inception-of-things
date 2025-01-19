@@ -4,7 +4,6 @@ Hello everybody, I am pleased to demonstrate some aspects of Kubernetes (k8s). F
 
 ## Table of Contents
 - [Architecture](#architecture)
-- [The difference betweeen k8s and k3s](#k8s-k3s)
 - [Common terms in the world of k8s](#common-terms)
 - [Kubeconfig](#kubeconfig)
 - [Pods](#pods)
@@ -36,7 +35,7 @@ This architecture ensures high availability, scalability, and efficient manageme
 
  Differences between k8s and k3s
 
-Here are some key differences between Kubernetes (k8s) and k3s:
+Here are some key dikubectlfferences between Kubernetes (k8s) and k3s:
 
 - **Resource Consumption**: k3s is designed to be lightweight and consume fewer resources compared to k8s.
 - **Installation**: k3s has a simplified installation process, making it easier to set up.
@@ -46,5 +45,29 @@ Here are some key differences between Kubernetes (k8s) and k3s:
 
 These differences make k3s a more suitable option for specific scenarios where resource constraints and simplicity are important.
 
+### Example of k8s Architecture
 
+This is an example of Kubernetes (k8s) architecture. Below is a diagram that illustrates the components of the master node and worker node:
 
+![Kubernetes Architecture](./imgs/k8s-architecture.png)
+
+In our situation, we have installed k3s, which combines both the master and worker components into a single node. This setup retains the same components but is optimized for lightweight and resource-constrained environments.
+
+## Common terms in the world of k8s
+
+Understanding the terminology used in Kubernetes is crucial for navigating and managing a cluster. Here are some common terms you will encounter:
+
+- **Cluster**: A group of machines (nodes) working together to run applications and manage workloads.
+- **Node**: A machine in the cluster. It can be a physical server or a virtual machine.
+Control Plane or (Master) Node: Manages the cluster (API server, scheduler, etc.).
+Worker or (agent) Node: Runs application workloads (pods).
+- **Resources**: These are the objects that you manage in Kubernetes, such as Pods, Services, and Deployments.
+- **Components**: These refer to the individual parts that make up the Kubernetes system, including the API Server, etcd, Controller Manager, Scheduler, Kubelet, and Kube-proxy.
+- **Objects**: A record of a resource, stored in etcd (Kubernetes' database). Common objects.  include Pods, Services, Deployment and ConfigMaps.
+- **Abstraction**: A way to simplify complex concepts by hiding details:
+Pods abstract containers.
+Deployments abstract pod scaling and updates.
+Services abstract networking and load balancing.
+- **Manifest**: A YAML/JSON file that defines a resource or object.
+
+These terms are fundamental to understanding how Kubernetes operates and how to interact with it effectively.
