@@ -6,7 +6,7 @@ Hello everybody, I am pleased to demonstrate some aspects of Kubernetes (k8s). F
 - [Architecture](#architecture)
 - [Common terms in the world of k8s](#common-terms-in-the-world-of-k8s)
 - [Kubeconfig](#kubeconfig)
-- [Labels and Selectors](#labels-and-selector)
+- [Labels and Selectors](#labels-and-selectors)
 - [Pods](#pods)
 - [ReplicaSet](#replicaset)
 - [Deployment](#deployment)
@@ -114,7 +114,7 @@ current-context: example-context
 After installing k3s, the default path for this configuration is `/etc/rancher/k3s/k3s.yml`. If you are using a different path, you can use the `kubectl` command with the `--kubeconfig` option followed by the path.
 
 
-## Labesl and Selectors
+## Labels and Selectors
 Labels and selectors are fundamental concepts in Kubernetes, which is a popular container orchestration platform. They play a crucial role in organizing, managing, and deploying applications.
 
 `Labels`
