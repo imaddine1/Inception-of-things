@@ -397,3 +397,337 @@ Ingress is a powerful tool for managing external access to services in a Kuberne
 This example Show The idea that ingress Brigns:
 
 ![ingress](./imgs/ingress.png)
+
+## Namespaces
+
+Namespaces in Kubernetes are a way to divide cluster resources between multiple users or teams. They provide a mechanism for isolating groups of resources within a single cluster, allowing for better organization and management.
+
+### Key Characteristics of Namespaces
+
+- **Isolation**: Namespaces provide a level of isolation for resources, making it easier to manage and secure different environments (e.g., development, staging, production).
+- **Resource Quotas**: You can set resource quotas on namespaces to limit the amount of resources (CPU, memory, etc.) that can be consumed.
+- **Access Control**: Role-Based Access Control (RBAC) can be applied to namespaces to control access to resources within them.
+- **Scoped Resources**: Resources like Pods, Services, and Deployments are namespace-scoped, meaning they exist within a specific namespace.
+
+### Example Namespace Manifest
+
+Here is an example of a simple Namespace manifest in YAML format:
+
+```yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+    name: example-namespace
+```
+
+In this example, a Namespace named `example-namespace` is created.
+
+### Using Namespaces
+
+To create a namespace, you can use the `kubectl` command:
+
+```sh
+kubectl create namespace example-namespace
+```
+
+To list all namespaces in the cluster:
+
+```sh
+kubectl get namespaces
+```
+
+To deploy resources into a specific namespace, you can specify the namespace in the resource manifest or use the `--namespace` flag with `kubectl` commands:
+
+```sh
+kubectl apply -f resource.yaml --namespace=example-namespace
+```
+
+### Use Cases for Namespaces
+
+- **Environment Separation**: Separate resources for different environments (e.g., dev, test, prod) within the same cluster.
+- **Multi-Tenancy**: Support multiple teams or projects within a single cluster, providing isolation and resource management.
+- **Resource Management**: Apply resource quotas and limits to control resource usage within namespaces.
+- **Access Control**: Implement fine-grained access control using RBAC to manage permissions within namespaces.
+
+Namespaces are a powerful feature in Kubernetes that help organize and manage resources efficiently, providing isolation, resource management, and access control.
+
+This diagram illustrates the concept of namespaces:
+
+![Namespaces](./imgs/namespace.png)
+
+## K3d
+
+K3d is a lightweight wrapper to run k3s (Rancher's minimal Kubernetes distribution) in Docker. It simplifies the process of creating and managing k3s clusters in Docker containers, making it an excellent tool for local development and testing.
+
+### Key Features of K3d
+
+- **Lightweight**: K3d leverages k3s, which is designed to be lightweight and resource-efficient.
+- **Docker Integration**: Runs k3s clusters inside Docker containers, making it easy to set up and tear down clusters.
+- **Multi-Node Clusters**: Supports creating multi-node clusters for testing and development.
+- **Port Mapping**: Allows mapping ports from the host to the k3s cluster, facilitating access to services running in the cluster.
+- **Easy Management**: Provides simple commands to create, delete, start, and stop clusters.
+
+### Installing K3d
+
+To install k3d, you can use the following command:
+
+```sh
+curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
+```
+
+Alternatively, you can use Homebrew on macOS:
+
+```sh
+brew install k3d
+```
+
+### Creating a Cluster
+
+To create a k3d cluster, use the following command:
+
+```sh
+k3d cluster create mycluster
+```
+
+This command creates a single-node k3s cluster named `mycluster`.
+
+### Managing Clusters
+
+- **List Clusters**: To list all k3d clusters, use:
+
+    ```sh
+    k3d cluster list
+    ```
+
+- **Delete Cluster**: To delete a cluster, use:
+
+    ```sh
+    k3d cluster delete mycluster
+    ```
+
+- **Start Cluster**: To start a stopped cluster, use:
+
+    ```sh
+    k3d cluster start mycluster
+    ```
+
+- **Stop Cluster**: To stop a running cluster, use:
+
+    ```sh
+    k3d cluster stop mycluster
+    ```
+
+### Example: Creating a Multi-Node Cluster
+
+To create a multi-node k3d cluster with one master and two worker nodes, use the following command:
+
+```sh
+k3d cluster create mycluster --servers 1 --agents 2
+```
+
+### Accessing the Cluster
+
+After creating a k3d cluster, you can access it using `kubectl`. The kubeconfig file is automatically updated to include the new cluster context. To switch to the k3d cluster context, use:
+
+```sh
+kubectl config use-context k3d-mycluster
+```
+
+### Use Cases for K3d
+
+- **Local Development**: Quickly spin up Kubernetes clusters for local development and testing.
+- **CI/CD Pipelines**: Integrate k3d into CI/CD pipelines to test Kubernetes deployments.
+- **Learning and Experimentation**: Use k3d to learn Kubernetes concepts and experiment with different configurations.
+
+K3d is a powerful tool that simplifies the process of running k3s clusters in Docker, making it ideal for local development, testing, and learning Kubernetes.
+
+## ArgoCD
+
+ArgoCD is a declarative, GitOps continuous delivery tool for Kubernetes. It automates the deployment of applications to Kubernetes clusters by tracking changes in a Git repository and synchronizing the cluster state with the desired state defined in the repository.
+
+### Key Features of ArgoCD
+
+- **Declarative GitOps**: Uses Git repositories as the source of truth for application definitions, configurations, and environments.
+- **Automated Sync**: Continuously monitors Git repositories and automatically synchronizes the cluster state with the desired state.
+- **Application Rollbacks**: Supports easy rollbacks to previous application versions in case of issues.
+- **Multi-Cluster Support**: Manages applications across multiple Kubernetes clusters from a single ArgoCD instance.
+- **User Interface**: Provides a web-based UI for visualizing and managing application deployments.
+- **Access Control**: Integrates with Kubernetes RBAC for fine-grained access control.
+
+### Installing ArgoCD
+
+To install ArgoCD, you can use the following commands:
+
+```sh
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```
+
+### Accessing the ArgoCD UI
+
+To access the ArgoCD UI, you need to expose the ArgoCD server. You can use port forwarding for this purpose:
+
+```sh
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+```
+
+Then, open your browser and navigate to `https://localhost:8080`.
+
+### Logging into ArgoCD
+
+The default username is `admin`. To get the initial password, run the following command:
+
+```sh
+kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d
+```
+
+### Creating an Application
+
+To create an application in ArgoCD, you can use the ArgoCD CLI or the web UI. Here is an example using the CLI:
+
+```sh
+argocd app create my-app \
+    --repo https://github.com/my-org/my-repo.git \
+    --path my-app-path \
+    --dest-server https://kubernetes.default.svc \
+    --dest-namespace default
+```
+
+### Syncing an Application
+
+To manually sync an application, use the following command:
+
+```sh
+argocd app sync my-app
+```
+
+### Monitoring Application Status
+
+To check the status of an application, use the following command:
+
+```sh
+argocd app get my-app
+```
+
+### Use Cases for ArgoCD
+
+- **Continuous Delivery**: Automate the deployment of applications to Kubernetes clusters using GitOps principles.
+- **Environment Management**: Manage multiple environments (e.g., dev, staging, prod) with separate Git branches or repositories.
+- **Disaster Recovery**: Quickly recover from failures by rolling back to previous application versions.
+- **Compliance and Auditing**: Maintain a clear audit trail of changes to application configurations and deployments.
+
+ArgoCD is a powerful tool for implementing GitOps workflows in Kubernetes, providing automated, declarative, and continuous delivery of applications.
+
+This diagram illustrates the ArgoCD workflow:
+
+![ArgoCD Workflow](./imgs/argocd.png)
+
+## Deploy GitLab using Helm
+
+Helm is a package manager for Kubernetes that simplifies the deployment and management of applications. GitLab, a popular DevOps platform, can be deployed on Kubernetes using Helm charts, which provide a convenient way to package and deploy GitLab and its dependencies.
+
+### Prerequisites
+
+Before deploying GitLab using Helm, ensure you have the following prerequisites:
+
+- A running Kubernetes cluster
+- Helm installed on your local machine
+- kubectl configured to interact with your Kubernetes cluster
+
+### Adding the GitLab Helm Repository
+
+First, add the GitLab Helm repository to your Helm configuration:
+
+```sh
+helm repo add gitlab https://charts.gitlab.io/
+helm repo update
+```
+
+### Creating a Namespace for GitLab
+
+Create a dedicated namespace for GitLab to keep its resources organized:
+
+```sh
+kubectl create namespace gitlab
+```
+
+### Installing GitLab
+
+To install GitLab using Helm, use the following command:
+
+```sh
+helm install gitlab gitlab/gitlab --namespace gitlab
+```
+
+This command installs GitLab with the default configuration. You can customize the installation by providing a values file with your specific configuration options.
+
+### Customizing the GitLab Installation
+
+To customize the GitLab installation, create a `values.yaml` file with your desired configuration. Here is an example of a basic `values.yaml` file:
+
+```yaml
+global:
+    hosts:
+        domain: example.com
+    ingress:
+        configureCertmanager: false
+        annotations:
+            kubernetes.io/ingress.class: nginx
+        tls:
+            enabled: true
+            secretName: gitlab-tls
+certmanager-issuer:
+    email: your-email@example.com
+```
+
+Install GitLab with the custom values file:
+
+```sh
+helm install gitlab gitlab/gitlab --namespace gitlab -f values.yaml
+```
+
+### Accessing GitLab
+
+After the installation is complete, you can access GitLab using the provided domain name. If you are using a local cluster or do not have a domain name, you can use port forwarding to access GitLab:
+
+```sh
+kubectl port-forward --namespace gitlab svc/gitlab-webservice-default 8080:8181
+```
+
+Then, open your browser and navigate to `http://localhost:8080`.
+
+### Initial Login
+
+To get the initial root password, run the following command:
+
+```sh
+kubectl get secret gitlab-gitlab-initial-root-password -n gitlab -o jsonpath="{.data.password}" | base64 -d
+```
+
+Use the username `root` and the retrieved password to log in to GitLab.
+
+### Upgrading GitLab
+
+To upgrade GitLab to a newer version, update the Helm repository and run the upgrade command:
+
+```sh
+helm repo update
+helm upgrade gitlab gitlab/gitlab --namespace gitlab -f values.yaml
+```
+
+### Uninstalling GitLab
+
+To uninstall GitLab and remove all its resources, use the following command:
+
+```sh
+helm uninstall gitlab --namespace gitlab
+kubectl delete namespace gitlab
+```
+
+### Use Cases for Deploying GitLab with Helm
+
+- **CI/CD Pipelines**: Set up GitLab CI/CD pipelines to automate the build, test, and deployment processes.
+- **Source Code Management**: Host and manage your source code repositories with GitLab.
+- **DevOps Platform**: Utilize GitLab's comprehensive DevOps features, including issue tracking, code review, and project management.
+
+Deploying GitLab using Helm provides a scalable and manageable way to leverage GitLab's powerful DevOps capabilities within a Kubernetes environment.
