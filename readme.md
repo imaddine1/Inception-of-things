@@ -16,6 +16,11 @@ Hello everybody, I am pleased to demonstrate some aspects of Kubernetes (k8s). F
 - [K3d](#k3d)
 - [ArgoCD](#argocd)
 - [Deploy GitLab using Helm](#deploy-gitlab-using-helm)
+- [Explain P1](#explain-p1)
+- [Explain P2](#explain-p2)
+- [Explain P3](#explain-p3)
+- [Explain Bonus](#explain-bonus)
+
 
 ## Architecture
 
@@ -731,3 +736,34 @@ kubectl delete namespace gitlab
 - **DevOps Platform**: Utilize GitLab's comprehensive DevOps features, including issue tracking, code review, and project management.
 
 Deploying GitLab using Helm provides a scalable and manageable way to leverage GitLab's powerful DevOps capabilities within a Kubernetes environment.
+
+## Explain P1
+
+They asks here to implement the concept of k8s by creating two nodes , first one is `master node` and second one is `worker node` and assign it to the `master node`.
+
+in the first page of k3s you will find two methods of usage of k3s , you can run it as `single node server`
+or you can create more `nodes` by using different links inside each nodes.
+
+the `server.sh` script is responsible for installing k3s as `master node`
+the `worker.sh` scirpt is responsible for installing k3s as `worker node`
+
+to Run it:
+
+```sh
+vagrant up
+```
+and connect to the master node By
+```sh
+vagrant ssh abouhmadS
+```
+to make sure that everything is configured well inside the `master node` machine write :
+```sh
+kubectl get nodes
+```
+it must display two nodes , or something wrong happend.
+
+## Explain P2
+
+This side of the project require from you to understand what is `pod, deployment, service, ingress`, if you just wrote what i write about them you will find it a peace of cake.
+
+

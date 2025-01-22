@@ -25,14 +25,7 @@ cd /tmp/ingress
 kubectl apply -f ingress-config.yaml
 
 
-############ i want to run the borwser but i took a long time so i skip it #############
 
-# # installing GUI
-# sudo apt update && sudo apt upgrade -y
-# sudo apt install xfce4 xfce4-goodies -y
-
-# # installing firefox
-# sudo apt install firefox-esr -y
 
 
 
