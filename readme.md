@@ -764,7 +764,17 @@ it must display two nodes , or something wrong happend.
 
 ## Explain P2
 
-This side of the project require from you to understand what is `pod, deployment, service, ingress`, if you just wrote what i said about them above you will find it a peace of cake.
+This side of the project require from you to understand what is `pod, ReplicaSet, deployment, service and ingress`, if you just wrote what i said about them above you will find it a peace of cake.
+
+just the below command 
+```sh
+vagrant up
+```
+You can now go to the browser and use the `IP` of the machine in my case i used: `http://192.168.56.110`
+
+
+
+
 
 
 

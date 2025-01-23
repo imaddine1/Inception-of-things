@@ -55,13 +55,14 @@ sudo kubectl apply -f . || handle_error "Failed to apply deployment manifests"
 
 # Wait for all pods to be in running state
 print_header "Waiting for all pods to be in running state"
-sudo kubectl wait --for=condition=Ready pods --all --timeout=300s
+sleep 10s ; sudo kubectl wait --for=condition=Ready pods --all --timeout=300s || handle_error "Not all pods are in running state"
 
-if [ $? -eq 0 ]; then
-  info "All pods are in running state"
-else
-  handle_error "Not all pods are in running state"
-fi
+
+# if [ $? -eq 0 ]; then
+#   info "All pods are in running state"
+# else
+#   handle_error "Not all pods are in running state"
+# fi
 
 # Apply service manifests
 print_header "Applying service manifests"
@@ -70,13 +71,8 @@ sudo kubectl apply -f . || handle_error "Failed to apply service manifests"
 
 # Wait for all services to be in running state
 print_header "Waiting for all services to be in running state"
-sudo  kubectl wait --for=jsonpath='{.spec.selector.app}' -f /tmp/services/ --timeout=300s
+sudo  kubectl wait --for=jsonpath='{.spec.selector.app}' -f /tmp/services/ --timeout=300s || handle_error "Not all services are in running state"
 
-if [ $? -eq 0 ]; then
-  info "All services are in running state"
-else
-  handle_error "Not all services are in running state"
-fi
 
 print_header "Applying ingress manifests"
 cd /tmp/ingress || handle_error "Directory /tmp/ingress not found"
