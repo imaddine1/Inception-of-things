@@ -12,11 +12,11 @@ spec:
       labels:
         app: app3
     spec:
-      env:
-        - name: MESSAGE
-          value: "Hello from app3"
       containers:
       - name: app3-container
         image: paulbouwer/hello-kubernetes:1.10
         ports:
         - containerPort: 8080
+        env:
+        - name: MESSAGE
+          value: "Hello from app3"

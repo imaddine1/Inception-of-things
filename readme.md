@@ -764,6 +764,7 @@ it must display two nodes , or something wrong happend.
 
 ## Explain P2
 
-This side of the project require from you to understand what is `pod, deployment, service, ingress`, if you just wrote what i write about them you will find it a peace of cake.
+This side of the project require from you to understand what is `pod, deployment, service, ingress`, if you just wrote what i said about them above you will find it a peace of cake.
+
 
 
