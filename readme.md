@@ -764,13 +764,22 @@ it must display two nodes , or something wrong happend.
 
 ## Explain P2
 
-This side of the project require from you to understand what is `pod, ReplicaSet, deployment, service and ingress`, if you just wrote what i said about them above you will find it a peace of cake.
+This side of the project require from you to understand what is `pod, ReplicaSet, deployment, service and ingress`, if you just wrote what i said about them above you will find it a peace of cake.is
 
-just the below command 
+This part demonstrates the power of Ingress. We use it to route different hostnames to their respective services.
+
+Run The command below 
 ```sh
 vagrant up
 ```
 You can now go to the browser and use the `IP` of the machine in my case i used: `http://192.168.56.110`
+And you can try accessing other services using curl:
+
+```sh
+curl -H "Host: app1.com" http://192.168.56.110/
+curl -H "Host: app2.com" http://192.168.56.110/
+```
+
 
 
 
