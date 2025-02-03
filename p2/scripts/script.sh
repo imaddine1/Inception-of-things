@@ -25,6 +25,10 @@ info() {
   echo -e "${YELLOW}Info: $1${RESET}"
 }
 
+
+#Update the system
+print_header "Updating the system"
+sudo apt update -y && sudo apt upgrade -y || handle_error "Failed to update the system"
 # Check if curl is installed
 print_header "Checking if curl is installed"
 command -v curl
