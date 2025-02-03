@@ -41,7 +41,7 @@ This architecture ensures high availability, scalability, and efficient manageme
 
  Differences between k8s and k3s
 
-Here are some key dikubectlfferences between Kubernetes (k8s) and k3s:
+Here are some key differences between Kubernetes (k8s) and k3s:
 
 - **Resource Consumption**: k3s is designed to be lightweight and consume fewer resources compared to k8s.
 - **Installation**: k3s has a simplified installation process, making it easier to set up.
