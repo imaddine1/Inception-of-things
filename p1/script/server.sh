@@ -1,12 +1,19 @@
 #!/bin/bash
 
+# Update and upgrade packages
+echo "Updating and upgrading packages..."
+sudo apt update && sudo apt upgrade -y
+# Install curl
+echo "Installing curl..."
+sudo apt install -y curl
+
 # Set up DNS
 echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null
 
 # Install K3s
 if ! command -v k3s &> /dev/null; then
   echo "Installing K3s..."
-  curl -sfL https://get.k3s.io | sh -s - server --write-kubeconfig-mode 644
+  curl -sfL https://get.k3s.io | sh -s - server --write-kubeconfig-mode 644 --flannel-iface eth1
 else
   echo "K3s is already installed."
 fi

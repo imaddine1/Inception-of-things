@@ -1,7 +1,7 @@
 Vagrant.configure("2") do |config|
   # Server VM
   config.vm.define "abouhmadS" do |server|
-    server.vm.box = "ubuntu/focal64"
+    server.vm.box = "debian/bookworm64"
     server.vm.hostname = "abouhmadS"
     server.vm.network "private_network", ip: "192.168.56.110"
     server.vm.provider "virtualbox" do |vb|
@@ -15,7 +15,7 @@ Vagrant.configure("2") do |config|
 
   # Worker VM
   config.vm.define "abouhmadSW" do |worker|
-    worker.vm.box = "ubuntu/focal64"
+    worker.vm.box = "debian/bookworm64"
     worker.vm.hostname = "abouhmadSW"
     worker.vm.network "private_network", ip: "192.168.56.111"
     worker.vm.provider "virtualbox" do |vb|
