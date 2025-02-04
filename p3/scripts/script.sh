@@ -8,7 +8,7 @@ BLUE='\033[0;34m'
 RESET='\033[0m'
 
 #Devine Vars
-CONFIG="--kubeconfig ./kubeconfig.yml"
+export CONFIG="--kubeconfig ./kubeconfig.yml"
 
 # Function to print a header
 print_header() {
@@ -138,9 +138,15 @@ kubectl apply -f ./confs/application.yaml  $CONFIG -n argocd  || handle_error "F
 ##### check is service running well ######
 kubectl get svc -n dev $CONFIG | grep 'my-app-service' || handle_error "Service is not running well"
 
-
 ######### expose the service to access the app ########
-kubectl port-forward svc/my-app-service 8061:80 --address 0.0.0.0  $CONFIG -n dev
+
+while true; do
+  curl -s -o /dev/null localhost:8061
+  if [ $? -ne 0 ]; then
+    kubectl port-forward svc/my-app-service 8061:80 --address 0.0.0.0 $CONFIG -n dev
+  fi
+  sleep 5
+done
 
 
 print_header "ALL DONE"
