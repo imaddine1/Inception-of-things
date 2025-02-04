@@ -7,6 +7,9 @@ RED='\033[0;31m'
 BLUE='\033[0;34m'
 RESET='\033[0m'
 
+#Devine Vars
+CONFIG_BONUS="--kubeconfig /etc/rancher/k3s/k3s.yaml"
+
 # Function to print a header
 print_header() {
   echo -e "${BLUE}========================================${RESET}"
@@ -47,7 +50,7 @@ print_header "Installing k3s"
 if command -v k3s &> /dev/null; then
   info "k3s is already installed"
 else
-  curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server" sh -s || handle_error "Failed to install k3s"
+   curl -sfL https://get.k3s.io | sh - || handle_error "Failed to install k3s"
 fi
 
 # Install Helm
@@ -62,25 +65,21 @@ else
   sudo apt-get install helm || handle_error "Failed to install Helm"
 fi
 
-# Add GitLab Helm repository
-print_header "Adding GitLab Helm Repository"
-sudo helm repo add gitlab https://charts.gitlab.io/ || handle_error "Failed to add GitLab Helm repository"
-sudo helm repo update || handle_error "Failed to update Helm repositories"
 
 # Install or upgrade GitLab using Helm
 
 print_header "Installing or Upgrading GitLab"
 sudo helm upgrade --install my-gitlab gitlab/gitlab --create-namespace --namespace gitlab \
   --kubeconfig /etc/rancher/k3s/k3s.yaml \
-  -f /confs/values.yml \
-  --timeout 800s 
+  -f ../confs/values.yml \
+  --timeout 800s || handle_error "Failed to install or upgrade GitLab"
 # Wait until the webservice is ready
 print_header "Waiting for GitLab Webservice to be Ready"
-(sudo kubectl wait --for=condition=ready --timeout=1200s pod -l app=webservice -n gitlab) & show_wait_animation || handle_error "GitLab webservice did not become ready in time"
+sudo kubectl wait --for=condition=ready --timeout=1200s pod -l app=webservice -n gitlab $CONFIG_BONUS & show_wait_animation || handle_error "GitLab webservice did not become ready in time"
 
 # Retrieve the initial root password for GitLab
 print_header "Retrieving GitLab Initial Root Password"
-export GITLAB_PASSWORD=$(sudo kubectl get secret my-gitlab-gitlab-initial-root-password -n gitlab -o jsonpath="{.data.password}" | base64 --decode) || handle_error "Failed to retrieve GitLab initial root password"
+export GITLAB_PASSWORD=$(sudo kubectl $CONFIG_BONUS get secret my-gitlab-gitlab-initial-root-password -n gitlab -o jsonpath="{.data.password}" | base64 --decode) || handle_error "Failed to retrieve GitLab initial root password"
 echo -e "${GREEN}GITLAB PASSWORD: $GITLAB_PASSWORD${RESET}"
 
 # Port-forward to access GitLab
@@ -88,8 +87,8 @@ print_header "Setting Up Port Forwarding to Access GitLab"
 if pgrep -f "kubectl port-forward svc/my-gitlab-webservice-default" > /dev/null; then
   info "Port forwarding is already set up"
 else
-  sudo kubectl port-forward svc/my-gitlab-webservice-default -n gitlab --address 0.0.0.0 8888:8181 2>&1 >/dev/null &
-  echo -e "${GREEN}GitLab is accessible at http://localhost:8080${RESET}"
+  sudo kubectl port-forward svc/my-gitlab-webservice-default $CONFIG_BONUS -n gitlab --address 0.0.0.0 8888:8181 2>&1 >/dev/null &
+  echo -e "${GREEN}GitLab is accessible at http://localhost:8888${RESET}"
 fi
 
 
