@@ -44,7 +44,7 @@ command -v k3s
 if [ $? -eq 0 ]; then
   info "k3s is already installed"
 else
-  curl -sfL https://get.k3s.io | sh - || handle_error "Failed to install k3s"
+  curl -sfL https://get.k3s.io | sh -s - --flannel-iface eth1 || handle_error "Failed to install k3s"
 fi
 
 # Add alias for kubectl
@@ -84,5 +84,9 @@ sudo kubectl apply -f . || handle_error "Failed to apply ingress manifests"
 
 print_header "Script Complete"
 echo -e "${GREEN}All manifests have been successfully applied${RESET}"
-echo -e "${GREEN} You can Access The website by visiting ${YELLOW}http://IP-OF-MACHINE${RESET}"
- 
+echo -e "${GREEN} You can Access The website by visiting ${YELLOW}http://192.168.56.110${RESET}"
+echo -e "${GREEN} The Port IS BELOW "
+var=$(sudo kubectl get svc -n kube-system --kubeconfig /etc/rancher/k3s/k3s.yaml)
+echo -e "${GREEN} $var ${RESET}"
+
+# Just TO remember my self that If i want to use the ip of the machine 192.168.56.110 the port is in the above command
