@@ -8,7 +8,7 @@ BLUE='\033[0;34m'
 RESET='\033[0m'
 
 #Devine Vars
-CONFIG="--kubeconfig ./kubeconfig.yml"
+CONFIG="--kubeconfig ./confs/kubeconfig.yml"
 
 # Function to print a header
 print_header() {
@@ -88,8 +88,8 @@ print_header "Creating k3d Cluster"
 sudo k3d cluster create imad
 ########## Creating kubeconfig file for kubectl #########
 print_header "Creating kubeconfig File >> ~/.bashrc"
-touch ./kubeconfig.yml
-sudo k3d kubeconfig get -a > ./kubeconfig.yml || handle_error "Failed to create kubeconfig file"
+touch ./confs/kubeconfig.yml
+sudo k3d kubeconfig get -a > ./confs/kubeconfig.yml || handle_error "Failed to create kubeconfig file"
 info "THIS THE FILE THAT MAKE KUBECTL WORK : ${GREEN}./kubeconfig.yml"
 ########## create two namespcaces ###############
 print_header "Creating Namespaces Dev and ArgoCD"
