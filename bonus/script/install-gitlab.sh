@@ -69,9 +69,10 @@ fi
 # Install or upgrade GitLab using Helm
 
 print_header "Installing or Upgrading GitLab"
+sudo helm repo add gitlab http://charts.gitlab.io/
 sudo helm upgrade --install my-gitlab gitlab/gitlab --create-namespace --namespace gitlab \
   --kubeconfig /etc/rancher/k3s/k3s.yaml \
-  -f ../confs/values.yml \
+  -f ./confs/values.yml \
   --timeout 800s || handle_error "Failed to install or upgrade GitLab"
 # Wait until the webservice is ready
 print_header "Waiting for GitLab Webservice to be Ready"
@@ -90,6 +91,9 @@ else
   sudo kubectl port-forward svc/my-gitlab-webservice-default $CONFIG_BONUS -n gitlab --address 0.0.0.0 8888:8181 2>&1 >/dev/null &
   echo -e "${GREEN}GitLab is accessible at http://localhost:8888${RESET}"
 fi
+
+
+
 
 
 print_header "Installation Complete"

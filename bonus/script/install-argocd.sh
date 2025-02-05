@@ -60,11 +60,11 @@ sudo kubectl wait --for=condition=Ready pods --all -n argocd --timeout=300s $CON
 
 # Expose ArgoCD server port
 print_header "Exposing ArgoCD Server Port"
-curl -s -o /dev/null localhost:8070
+curl localhost:8070 -s -o /dev/null
 if [ $? -eq 0 ]; then
   info "ArgoCD Server port is already exposed"
 else
-  sudo kubectl port-forward svc/argocd-server --address 0.0.0.0 8070:80 -n argocd $CONFIG &
+  sudo kubectl port-forward svc/argocd-server --address 0.0.0.0 8070:80 -n argocd $CONFIG&
 fi
 echo -e "${GREEN}ArgoCD is accessible at http://localhost:8070${RESET}"
 
@@ -94,7 +94,23 @@ fi
 
 print_header "Creating ArgoCD Application"
 ####### now apply yaml file that will responsible for deploying the app from git repo to dev namespace ########
-sudo kubectl $CONFIG apply  -f ../confs/application.yml -n argocd  || handle_error "Failed to create ArgoCD application"
+sudo kubectl $CONFIG apply  -f ./confs/application.yml -n argocd  || handle_error "Failed to create ArgoCD application"
+
+  echo -e "${GREEN}ArgoCD is running on port 8070${RESET}"
+  echo -e "${GREEN}UserName is : admin ${RESET}"
+  echo -e "${GREEN}Password is : $(sudo kubectl $CONFIG get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 --decode) ${RESET}"
+
+
+ print_header "Port Forward Application"
+echo -e "${GREEN} Port-Forward application on port 8066${RESET}"
+while true; do
+  curl -s -o /dev/null localhost:8066
+  if [ $? -ne 0 ]; then
+    sudo kubectl port-forward svc/my-app-service 8066:80 --address 0.0.0.0 $CONFIG -n dev
+  fi
+  sleep 5
+done
+
 
 print_header "Installation Complete"
 
