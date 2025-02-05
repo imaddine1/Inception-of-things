@@ -76,7 +76,7 @@ sudo helm upgrade --install my-gitlab gitlab/gitlab --create-namespace --namespa
   --timeout 800s || handle_error "Failed to install or upgrade GitLab"
 # Wait until the webservice is ready
 print_header "Waiting for GitLab Webservice to be Ready"
-sudo kubectl wait --for=condition=ready --timeout=1200s pod -l app=webservice -n gitlab $CONFIG_BONUS & show_wait_animation || handle_error "GitLab webservice did not become ready in time"
+sudo kubectl wait --for=condition=ready --timeout=1800s pod -l app=webservice -n gitlab $CONFIG_BONUS & show_wait_animation || handle_error "GitLab webservice did not become ready in time"
 
 # Retrieve the initial root password for GitLab
 print_header "Retrieving GitLab Initial Root Password"
