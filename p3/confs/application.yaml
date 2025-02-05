@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/imaddine1/abouhmad.git
+    repoURL: https://github.com/imaddine1/abouhmad_config.git
     targetRevision: HEAD
     path: my-app
   destination:
