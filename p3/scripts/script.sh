@@ -46,7 +46,7 @@ show_loading() {
 
 ####### Update the packages first ########
 print_header "Updating Packages"
-sudo apt-get update && sudo apt-get
+sudo apt-get update && sudo apt-get upgrade -y
 
 ###### install docker then k3d it depend on it ##########
 print_header "Installing Docker"
@@ -54,7 +54,7 @@ if command -v docker &> /dev/null; then
   info "Docker is already installed"
 else
 # Add Docker's official GPG key:
-sudo apt-get update
+sudo apt-get  update
 sudo apt-get install ca-certificates curl -y
 sudo install -m 0755 -d /etc/apt/keyrings -y
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
