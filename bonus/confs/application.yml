@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: xxxxxx_xxxxxx_xxxxx
+    repoURL: http://10.13.250.203:8888/root/my-app.git
     targetRevision: HEAD
     path: my-app
   destination:
