@@ -8,7 +8,7 @@ BLUE='\033[0;34m'
 RESET='\033[0m'
 
 #Devine Vars
-export CONFIG="--kubeconfig ./kubeconfig.yml"
+CONFIG="--kubeconfig ./kubeconfig.yml"
 
 # Function to print a header
 print_header() {
@@ -53,22 +53,8 @@ print_header "Installing Docker"
 if command -v docker &> /dev/null; then
   info "Docker is already installed"
 else
-# Add Docker's official GPG key:
-sudo apt-get  update
-sudo apt-get install ca-certificates curl -y
-sudo install -m 0755 -d /etc/apt/keyrings -y
-sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-sudo chmod a+r /etc/apt/keyrings/docker.asc
-
-# Add the repository to Apt sources:
-echo \
-"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-$(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
-
 # Install Docker
-sudo apt-get install docker-ce  containerd.io -y & show_loading || handle_error "Failed to install Docker"
+sudo apt install docker.io -y & show_loading || handle_error "Failed to install Docker"
 
 fi
 
@@ -99,7 +85,7 @@ fi
 ####### we are ready to implement the requirement from the subject #######
 ######### first of all create a cluster that will wrap your resources #########
 print_header "Creating k3d Cluster"
-k3d cluster create imad
+sudo k3d cluster create imad
 ########## Creating kubeconfig file for kubectl #########
 print_header "Creating kubeconfig File >> ~/.bashrc"
 touch ./kubeconfig.yml
@@ -114,7 +100,7 @@ print_header "Installing ArgoCD"
 
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml $CONFIG || handle_error "Failed to apply ArgoCD on k3d cluster"
 ########### we add this step to make sure the pods are running ##########
-kubectl wait --for=condition=Ready pods --all -n argocd $CONFIG--timeout=300s & show_loading 
+kubectl wait --for=condition=Ready pods --all -n argocd $CONFIG --timeout=300s & show_loading 
 info "Pods of argocd are running now !!!"
 
 ####  now we are just hoping that argocd running well ########
@@ -136,12 +122,13 @@ print_header "Make Argocd Watching the Repo"
 kubectl apply -f ./confs/application.yaml  $CONFIG -n argocd  || handle_error "Failed to apply application.yaml"
 
 ##### check is service running well ######
-kubectl get svc -n dev $CONFIG | grep 'my-app-service' || handle_error "Service is not running well"
+kubectl wait --for=condition=Ready pods --all -n dev $CONFIG --timeout=300s & show_loading 
+
 
 ######### expose the service to access the app ########
-
+sleep 10s;
 while true; do
-  curl -s -o /dev/null localhost:8061
+  curl localhost:8061 -s -o /dev/null
   if [ $? -ne 0 ]; then
     kubectl port-forward svc/my-app-service 8061:80 --address 0.0.0.0 $CONFIG -n dev
   fi
